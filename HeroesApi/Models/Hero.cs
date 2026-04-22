@@ -10,11 +10,11 @@ public enum Universe
 
 public class Weapon
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     public bool IsRanged { get; set; }
 }
 
-public Hero {
+public class Hero {
     public int Id { get; set; }
 
     [JsonPropertyName("name")]
@@ -28,6 +28,6 @@ public Hero {
     [JsonIgnore]
     public string? InternalNotes { get; set; }
 
-    
+
 
 }
