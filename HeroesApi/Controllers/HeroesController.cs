@@ -11,10 +11,19 @@ namespace HeroesApi.Controllers;
 public class HeroesController : ControllerBase
 {
     [HttpGet]
-    public ActionResult<List<Hero>> GetAll()
+    public ActionResult<List<Hero>> GetAll([FromQuery] string? universe = null)
     {
-        return Ok(HeroesStore.Heroes);
+        if (universe == null) return Ok(HeroesStore.Heroes);
+        return Ok(HeroesStore.Heroes.Where(h => h.Universe.ToString() == universe));
     }
+
+    [HttpGet("search")]
+    public ActionResult<Hero> GetByName([FromQuery] string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return NotFound(new { Message = "name не должен быть пустым!" });
+        return Ok(HeroesStore.Heroes.Where(h => h.Name.Contains(name, StringComparison.OrdinalIgnoreCase)));
+    }
+
 
     [HttpGet("{id}")]
     public ActionResult<Hero> GetById(int id)
@@ -61,7 +70,7 @@ public class HeroesController : ControllerBase
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = true,
-            Converters = { new JsonStringEnumConverter()},
+            Converters = { new JsonStringEnumConverter() },
         };
         var hero = new Hero
         {
@@ -80,7 +89,9 @@ public class HeroesController : ControllerBase
         {
             serializedJson = serialized,
             deserializedObject = deserialized,
-internalNotesAfterDeserialized = deserialized?.InternalNotes ?? "null - поле было проигнорировано"
+            internalNotesAfterDeserialized = deserialized?.InternalNotes ?? "null - поле было проигнорировано"
         });
     }
+
+    
 }
